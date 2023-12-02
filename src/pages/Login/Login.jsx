@@ -26,9 +26,7 @@ const Login = () => {
     axios
       .post(`${baseUrl}auth/admin`, data)
       .then((data) => {
-        console.log(data);
         if (data.status === 200) {
-          console.log(data.data);
           setLoading(false);
           sessionStorage.setItem(
             "adminToken",
@@ -38,7 +36,6 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
         setLoading(false);
         if (error.response.data === "Wrong credentials") {
           toast.error("Email or Password is not registered");
@@ -90,9 +87,11 @@ const Login = () => {
               <span> {errors.password?.message}</span>
             </div>
             <button style={{ backgroundColor: "#27AE61" }} className="btn">
-              <span>Login</span>
-              {loading &&
-                "Please Wait! while we load contents for security reasons"}
+              {loading ? (
+                "Please Wait! while we load contents for security reasons"
+              ) : (
+                <span>Login</span>
+              )}
             </button>
           </form>
         </div>

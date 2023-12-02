@@ -44,7 +44,6 @@ const AppProvider = ({ children }) => {
         headers: { token: token },
       })
       .then((data) => {
-        console.log(data);
         if (data.status === 200) {
           setSLoading(false);
           setAllUsers(data.data);
@@ -83,14 +82,12 @@ const AppProvider = ({ children }) => {
         headers: { token: adminToken },
       })
       .then((data) => {
-        console.log(data);
         if (data.status === 200) {
           setUserDetails(data.data);
           setUserLoading(false);
         }
       })
       .catch((error) => {
-        console.log(error);
         setUserLoading(false);
       });
   };

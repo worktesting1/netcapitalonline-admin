@@ -47,7 +47,7 @@ const Dashboard = () => {
   const deleteUser = () => {
     setDeleteLoader(true);
     axios
-      .delete(`${baseUrl}/users/${userId}`, {
+      .delete(`${baseUrl}users/${userId}`, {
         headers: { token: adminToken },
       })
       .then((data) => {
@@ -62,7 +62,7 @@ const Dashboard = () => {
       })
       .catch((error) => {
         setDeleteLoader(false);
-        toast.error("User Already Deleted");
+        // toast.error("User Already Deleted");
       });
   };
 
@@ -114,7 +114,6 @@ const Dashboard = () => {
         { headers: { token: adminToken } }
       )
       .then((data) => {
-        console.log(data);
         if (data.status === 200) {
           setDepositLoading(false);
           getUserDetails(userId);
@@ -125,7 +124,6 @@ const Dashboard = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
         setDepositLoading(false);
       });
   };

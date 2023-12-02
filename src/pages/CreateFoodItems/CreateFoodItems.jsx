@@ -35,8 +35,8 @@ const CreateFoodItems = () => {
         { bonus: bonus },
         { headers: { token: adminToken } }
       )
-      .then((data) => console.log(data))
-      .catch((error) => console.log(error));
+      .then((data) => {})
+      .catch((error) => {});
   };
   const handleProfit = () => {
     axios
@@ -45,8 +45,8 @@ const CreateFoodItems = () => {
         { profit: profit },
         { headers: { token: adminToken } }
       )
-      .then((data) => console.log(data))
-      .catch((error) => console.log(error));
+      .then((data) => {})
+      .catch((error) => {});
   };
 
   const activateWithdrawal = () => {
@@ -60,7 +60,6 @@ const CreateFoodItems = () => {
         { headers: { token: adminToken } }
       )
       .then((data) => {
-        console.log(data);
         if (data.status === 200) {
           toast.success("Withdrawal Active");
           setWLoading(false);
@@ -70,7 +69,6 @@ const CreateFoodItems = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
         setWLoading(false);
       });
   };
