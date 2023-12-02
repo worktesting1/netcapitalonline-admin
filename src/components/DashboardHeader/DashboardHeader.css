@@ -1,0 +1,44 @@
+.dashboard_header {
+    background-color: var(--color3);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    position: fixed;
+    inset: 0;
+}
+
+.profile {
+    height: 40px;
+    width: 40px;
+    background-color: var(--other-color);
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile_text {
+    font-size: 24px;
+    line-height: 34px;
+    font-weight: 400;
+    color: white;
+}
+
+@media(max-width:600px) {
+    .profile {
+        display: none;
+    }
+
+    .dashboard_header>svg {
+        display: block;
+        font-size: 20px;
+        color: white;
+    }
+
+    .dashboard_nav {
+        width: 100%;
+    }
+}

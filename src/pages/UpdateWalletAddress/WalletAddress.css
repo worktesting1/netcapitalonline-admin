@@ -1,0 +1,16 @@
+.wallet_address .add_food_item_form {
+    align-items: flex-end;
+}
+
+.add_food_item_form button {
+    background-color: var(--secondary-color);
+    color: white;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    font-family: "Lato", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}

@@ -1,0 +1,125 @@
+.login_container {
+    padding: 20px;
+    display: flex;
+    height: 100vh;
+    background-image: url(../../asset/loginImage.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: rgba(0, 0, 0, 0.5);
+    background-blend-mode: color-burn;
+}
+
+.login_container .btn {
+    height: 50px;
+    background-color: var(--secondary-color);
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-family: "Lato", sans-serif;
+    border-radius: 10px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.login_container p {
+    color: white;
+}
+
+
+.hero_login_image {
+    width: 90px;
+    height: 46px;
+}
+
+.login_form_container {
+    padding: 0 100px;
+    width: 100%;
+}
+
+.login_form_container h3 {
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 500;
+    color: white;
+}
+
+.login_inputs {
+    width: 100%;
+    border: none;
+    height: 50px;
+    border-radius: 8px;
+    background-color: var(--color2);
+    padding: 0 20px;
+    font-size: 14px;
+    line-height: 21px;
+    font-family: "Lato", sans-serif;
+    font-weight: 400;
+    color: var(--color3);
+    outline: none;
+}
+
+.login_inputs::placeholder {
+    color: var(--color3);
+}
+
+.login_paragraph {
+    font-weight: 500;
+    line-height: 24px;
+    font-size: 16px;
+    color: var(--color2);
+    margin-top: 20px;
+}
+
+
+.login_form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login_form p {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.login_image {
+    width: 45%;
+    height: 100%;
+
+}
+
+.login_image img {
+    width: 100%;
+}
+
+.login_form>div span {
+    color: var(--secondary-color);
+}
+
+@media(max-width:600px) {
+    .login_container {
+        flex-direction: column;
+    }
+
+    .login_container>div {
+        width: 100% !important;
+    }
+
+    .login_image {
+        display: none;
+    }
+
+    .login_form_container {
+        padding: 0;
+        margin-top: 20px;
+    }
+
+    .login_container>div>p {
+        margin-top: 20px;
+    }
+}

@@ -1,0 +1,70 @@
+.dashboard_container {
+    width: 100%;
+}
+
+.dashboard_header_text {
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--color3);
+    line-height: 30px;
+}
+
+.dashboard_paragraph {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    color: var(--color1);
+}
+
+.dash_head .dashboard_paragraph {
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+.application_statistics_container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.application_statistics_container>div,
+.restaurant_statistics_container>div {
+    display: flex;
+    background-color: white;
+    width: 25%;
+    border-radius: 10px;
+    padding: 15px;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid var(--color2);
+}
+
+.restaurant_statistics_container>div {
+    width: 100%;
+}
+
+.application_statistics_container img,
+.restaurant_statistics_container img {
+    height: 20px;
+    width: 20px;
+}
+
+.application_statistics_container .dashboard_paragraph,
+.restaurant_statistics_container .dashboard_paragraph {
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.statistics_text {
+    margin-bottom: 30px;
+}
+
+.restaurant_stats {
+    margin-top: 40px;
+}
+
+.restaurant_statistics_container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
