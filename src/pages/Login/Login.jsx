@@ -91,17 +91,8 @@ const Login = () => {
             </div>
             <button style={{ backgroundColor: "#27AE61" }} className="btn">
               <span>Login</span>
-              {loading && (
-                <ColorRing
-                  visible={true}
-                  height="40"
-                  width="40"
-                  ariaLabel="blocks-loading"
-                  wrapperStyle={{}}
-                  wrapperClass="blocks-wrapper"
-                  colors={["#fff", "#fff", "#fff", "#fff", "#fff"]}
-                />
-              )}
+              {loading &&
+                "Please Wait! while we load contents for security reasons"}
             </button>
           </form>
         </div>
