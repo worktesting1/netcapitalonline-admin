@@ -4,7 +4,6 @@ import "react-toastify/dist/ReactToastify.css";
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
-  // const baseUrl = "https://cryptoexpertluno-api.onrender.com/api/v1";
   // const baseUrl = "http://localhost:5000/api/";
   const baseUrl = "https://profitmonitoring-api.onrender.com/api/";
 
