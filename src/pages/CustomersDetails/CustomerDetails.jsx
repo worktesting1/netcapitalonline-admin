@@ -90,7 +90,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
                   wrapperClass="blocks-wrapper"
                   colors={["black", "black", "black", "black", "black"]}
                 />
-              ) : status === true ? (
+              ) : status === "true" ? (
                 "Active"
               ) : (
                 "Inactive"

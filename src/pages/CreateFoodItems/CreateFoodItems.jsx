@@ -4,7 +4,6 @@ import { Button, CreateFoodHeader } from "../../components";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGlobalContext } from "../../context/context";
 import axios from "axios";
-import { useForm } from "react-hook-form";
 import { ColorRing } from "react-loader-spinner";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,52 +14,133 @@ const CreateFoodItems = () => {
   const { baseUrl, getUserDetails, userDetails } = useGlobalContext();
   const adminToken = JSON.parse(sessionStorage.getItem("adminToken"));
   const [wLoading, setWLoading] = useState(false);
-  const { register, handleSubmit } = useForm();
   const [loading, setLoading] = useState(false);
+  const [loadingBonus, setLoadingBonus] = useState(false);
+  const [loadingOtp, setLoadingOtp] = useState(false);
+  const [loadingOtpMessage, setLoadingOtpMessage] = useState(false);
   const [bonus, setbonus] = useState(false);
   const [profit, setprofit] = useState(false);
   const [otpMessage, setotpMessage] = useState(false);
-  const [otpStep, setotpStep] = useState(false);
-  const [otp, setotp] = useState(false);
+  const [otp, setotp] = useState("");
+  const [transferStep, setTransferStep] = useState("");
+  const [loadingTransfer, setLoadingT] = useState(false);
   const notify = () => toast.success("User Details Updated");
+
+  console.log(userDetails);
 
   const navigateBack = () => {
     navigate(`/user-details/${id}`);
   };
 
   const handleBonus = () => {
+    setLoadingBonus(true);
     axios
       .put(
         `${baseUrl}users/updatedata/${id}`,
         { bonus: bonus },
         { headers: { token: adminToken } }
       )
-      .then((data) => {})
-      .catch((error) => {});
+      .then((data) => {
+        setLoadingBonus(false);
+        notify();
+        setTimeout(() => {
+          navigateBack();
+        }, 2000);
+      })
+      .catch((error) => {
+        setLoadingBonus(false);
+      });
+  };
+  const handleTransferStep = () => {
+    setLoadingT(true);
+    axios
+      .put(
+        `${baseUrl}users/updatedata/${id}`,
+        { transferStep: transferStep },
+        { headers: { token: adminToken } }
+      )
+      .then((data) => {
+        setLoadingT(false);
+        notify();
+        setTimeout(() => {
+          navigateBack();
+        }, 2000);
+      })
+      .catch((error) => {
+        setLoadingT(false);
+      });
   };
   const handleProfit = () => {
+    setLoading(true);
     axios
       .put(
         `${baseUrl}users/updatedata/${id}`,
         { profit: profit },
         { headers: { token: adminToken } }
       )
-      .then((data) => {})
-      .catch((error) => {});
+      .then((data) => {
+        setLoading(false);
+        notify();
+        setTimeout(() => {
+          navigateBack();
+        }, 2000);
+      })
+      .catch((error) => {
+        setLoading(false);
+      });
+  };
+  const handleOtp = () => {
+    setLoadingOtp(true);
+    axios
+      .put(
+        `${baseUrl}users/updatedata/${id}`,
+        { otp: otp },
+        { headers: { token: adminToken } }
+      )
+      .then((data) => {
+        setLoadingOtp(false);
+        notify();
+        setTimeout(() => {
+          navigateBack();
+        }, 2000);
+      })
+      .catch((error) => {
+        setLoadingOtp(false);
+      });
+  };
+  const handleOtpMessage = () => {
+    setLoadingOtpMessage(true);
+    axios
+      .put(
+        `${baseUrl}users/updatedata/${id}`,
+        { otpMessage: otpMessage },
+        { headers: { token: adminToken } }
+      )
+      .then((data) => {
+        setLoadingOtpMessage(false);
+        notify();
+        setTimeout(() => {
+          navigateBack();
+        }, 2000);
+      })
+      .catch((error) => {
+        setLoadingOtpMessage(false);
+      });
   };
 
   const activateWithdrawal = () => {
     setWLoading(true);
     axios
-      .patch(
-        `${baseUrl}users/${id}`,
+      .put(
+        `${baseUrl}users/updatedata/${id}`,
         {
-          userCanWithdraw: true,
+          status: true,
         },
         { headers: { token: adminToken } }
       )
       .then((data) => {
         if (data.status === 200) {
+          console.log(data);
           toast.success("Withdrawal Active");
           setWLoading(false);
           setTimeout(() => {
@@ -69,6 +149,7 @@ const CreateFoodItems = () => {
         }
       })
       .catch((error) => {
+        console.log(error);
         setWLoading(false);
       });
   };
@@ -130,7 +211,7 @@ const CreateFoodItems = () => {
         </div>
         <Button
           icon={
-            loading && (
+            loadingBonus && (
               <ColorRing
                 visible={true}
                 height="40"
@@ -155,13 +236,13 @@ const CreateFoodItems = () => {
             type="text"
             className="food_item_inputs"
             placeholder="OTP"
-            onChange={(e) => setbonus(e.target.value)}
+            onChange={(e) => setotp(e.target.value)}
             defaultValue={userDetails.otp}
           />
         </div>
         <Button
           icon={
-            loading && (
+            loadingOtp && (
               <ColorRing
                 visible={true}
                 height="40"
@@ -178,7 +259,7 @@ const CreateFoodItems = () => {
           color={"#FFF"}
           width={"43%"}
           height={45}
-          navigate={() => ""}
+          navigate={handleOtp}
         />
         <div className="add_food_item_form_item_four">
           <p className="add_food_item_form_labels">OTP Message</p>
@@ -186,13 +267,13 @@ const CreateFoodItems = () => {
             type="text"
             className="food_item_inputs"
             placeholder="OTP Message"
-            {...register("otpMessage")}
             defaultValue={userDetails.otpMessage}
+            onChange={(e) => setotpMessage(e.target.value)}
           />
         </div>
         <Button
           icon={
-            loading && (
+            loadingOtpMessage && (
               <ColorRing
                 visible={true}
                 height="40"
@@ -209,7 +290,7 @@ const CreateFoodItems = () => {
           color={"#FFF"}
           width={"43%"}
           height={45}
-          navigate={() => ""}
+          navigate={handleOtpMessage}
         />
         <div className="add_food_item_form_item_four">
           <p className="add_food_item_form_labels">OTP Step</p>
@@ -217,13 +298,13 @@ const CreateFoodItems = () => {
             type="text"
             className="food_item_inputs"
             placeholder="OTP Step"
-            {...register("otpStep")}
-            defaultValue={userDetails.otpStep}
+            onChange={(e) => setTransferStep(e.target.value)}
+            defaultValue={userDetails.transferStep}
           />
         </div>
         <Button
           icon={
-            loading && (
+            loadingTransfer && (
               <ColorRing
                 visible={true}
                 height="40"
@@ -240,7 +321,7 @@ const CreateFoodItems = () => {
           color={"#FFF"}
           width={"43%"}
           height={45}
-          navigate={() => ""}
+          navigate={handleTransferStep}
         />
 
         <Button
