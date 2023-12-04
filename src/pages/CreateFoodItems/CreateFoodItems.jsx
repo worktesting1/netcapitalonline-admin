@@ -94,7 +94,7 @@ const CreateFoodItems = () => {
     axios
       .put(
         `${baseUrl}users/updatedata/${id}`,
-        { otp: otp },
+        { userOtp: otp },
         { headers: { token: adminToken } }
       )
       .then((data) => {
@@ -237,7 +237,7 @@ const CreateFoodItems = () => {
             className="food_item_inputs"
             placeholder="OTP"
             onChange={(e) => setotp(e.target.value)}
-            defaultValue={userDetails.otp}
+            defaultValue={userDetails.userOtp}
           />
         </div>
         <Button
