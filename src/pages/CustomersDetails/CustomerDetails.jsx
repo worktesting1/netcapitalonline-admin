@@ -22,11 +22,13 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
     userLoading,
     userDLoading,
     getAllDeposits,
+    getUserKyc,
+    kLoading,
+    userKYC,
   } = useGlobalContext();
   const {
     profit,
     bonus,
-
     firstName,
     lastName,
     country,
@@ -39,7 +41,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
     status,
   } = userDetails;
 
-  // Update Deposit to failed status
+  // Get User KYC Details
 
   userDeposits = allDeposits.filter((deposit) => deposit.userId === id);
   const getPendingDepositsAmount = () => {
@@ -65,6 +67,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
     setDetails("customers_order_details");
     getUserDetails(id);
     getAllDeposits(adminToken);
+    getUserKyc(id);
   }, []);
 
   return (
@@ -271,7 +274,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
         <Button
           id={1}
           border={"1px #E6E6E6 solid"}
-          title={"Withdrawals"}
+          title={"KYC"}
           height={35}
           width={115}
           borderRadius={30}
@@ -309,7 +312,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
         <div className="food_item_table_header">
           <h4>
             {details === "customers_order_details"
-              ? "All Withdrawals from client"
+              ? "KYC Details"
               : details === "customers_favorite_details"
               ? "All deposits from client"
               : "All transactions from customer"}
@@ -348,9 +351,19 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
               : ""
           }
           tableData={
-            details === "customers_favorite_details" ? userDeposits : ""
+            details === "customers_favorite_details"
+              ? userDeposits
+              : details === "customers_order_details"
+              ? userKYC[0]
+              : ""
           }
-          loading={userDLoading}
+          loading={
+            details === "customers_favorite_details"
+              ? userDLoading
+              : details === "customers_order_details"
+              ? kLoading
+              : userDLoading
+          }
         />
       </div>
     </section>

@@ -14,11 +14,14 @@ const Order = () => {
     getAllUsers,
     dLoading,
     usersLoading,
+    getAllKyc,
+    userKyc,
   } = useGlobalContext();
 
   useEffect(() => {
     getAllDeposits(adminToken);
     getAllUsers(adminToken);
+    getAllKyc();
   }, []);
 
   const successfulDeposits = allDeposits.filter((item) => item.status === true);
@@ -85,7 +88,7 @@ const Order = () => {
           </h3>
         </div>
         <div className="order_statistics_item">
-          <p className="dashboard_paragraph"> Deposits</p>
+          <p className="dashboard_paragraph"> Kycs</p>
           <h3 className="dashboard_header_text">
             {dLoading ? (
               <ColorRing
@@ -98,7 +101,7 @@ const Order = () => {
                 colors={["black", "black", "black", "black", "black"]}
               />
             ) : (
-              allDeposits.length
+              userKyc.length
             )}
           </h3>
         </div>

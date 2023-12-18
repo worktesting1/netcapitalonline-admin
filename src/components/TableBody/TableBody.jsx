@@ -15,8 +15,9 @@ const TableBody = ({
   loading,
 }) => {
   const [status, setStatus] = useState(true);
-  const symbol = "R";
+  const symbol = "$";
   const navigate = useNavigate();
+
   return (
     <>
       {order === "Order" ? (
@@ -362,7 +363,7 @@ const TableBody = ({
                           }
                           width={83}
                           height={30}
-                          navigate={() => toggleDepositStatus(_id, userId)}
+                          navigate={() => toggleDepositStatus(_id, userId, "")}
                         />
                       </div>
                     </div>
@@ -381,9 +382,9 @@ const TableBody = ({
                 "id",
                 "Client",
                 "created on",
-                "Wallet Address",
-                "amount",
-                "Reference",
+                "Identification Number",
+                "id front",
+                "id back",
                 "status",
               ].map((item, index) => (
                 <div
@@ -394,52 +395,55 @@ const TableBody = ({
                 </div>
               ))}
             </div>
-            <>
-              {[1, 2].map((_, index) => (
-                <Link
-                  to={`/${path}/${index + 1}`}
-                  key={index}
-                  className="table_body_body"
-                >
-                  <div className={`table_body_header_item_1`}>
-                    <p className="food_item_paragraphs">1</p>
-                  </div>
-                  <div className={`table_body_header_item_2`}>
-                    <p className="paginators_numbers">345</p>
-                  </div>
-                  <div className={`table_body_header_item_3`}>
-                    <p className="food_item_paragraphs">John Doe</p>
-                  </div>
-                  <div className={`table_body_header_item_4`}>
-                    <p className="food_item_paragraphs">2023-06-18 02:33:54</p>
-                  </div>
-                  <div className={`table_body_header_item_5`}>
-                    <p className="food_item_paragraphs">
-                      3J8LFx8nCnqLZS7TfEU9ZjAmEXit5N7KUe
-                    </p>
-                  </div>
-                  <div className={`table_body_header_item_6`}>
-                    <p className="food_item_paragraphs">{symbol}3,800</p>
-                  </div>
-                  <div className={`table_body_header_item_7`}>
-                    <p className="food_item_paragraphs">
-                      3J8LFx8nCnqLZS7TfEU9ZjA
-                    </p>
-                  </div>
-                  <div className={`table_body_header_item_8`}>
-                    <Button
-                      background={status ? "#EDFFF9" : "#FFF3E7"}
-                      title={status ? "Active" : "Inactive"}
-                      color={
-                        status ? "var(--secondary-color)" : "var(--other-color)"
-                      }
-                      width={83}
-                      height={30}
-                    />
-                  </div>
-                </Link>
-              ))}
-            </>
+            {tableData !== undefined && (
+              <div className="table_body_body">
+                <div className={`table_body_header_item_1`}>
+                  <p className="food_item_paragraphs">{tableData?.__v + 1}</p>
+                </div>
+                <div className={`table_body_header_item_2`}>
+                  <p className="paginators_numbers">
+                    {tableData?._id.slice(0, 7)}
+                  </p>
+                </div>
+                <div className={`table_body_header_item_3`}>
+                  <p className="food_item_paragraphs">{tableData?.idname}</p>
+                </div>
+                <div className={`table_body_header_item_4`}>
+                  <p className="food_item_paragraphs">
+                    {moment(tableData?.createdAt).format("MMMM Do YYYY, h:mm")}
+                  </p>
+                </div>
+                <div className={`table_body_header_item_5`}>
+                  <p className="food_item_paragraphs">{tableData?.idnumber}</p>
+                </div>
+                <div className={`table_body_header_item_6`}>
+                  <img
+                    src={tableData?.front[0]?.url}
+                    className="proof"
+                    alt=""
+                  />
+                </div>
+                <div className={`table_body_header_item_7`}>
+                  <img src={tableData?.back[0]?.url} className="proof" alt="" />
+                </div>
+                <div className={`table_body_header_item_8`}>
+                  <Button
+                    background={tableData?.status ? "#EDFFF9" : "#FFF3E7"}
+                    title={tableData?.status ? "Approved" : "Pending"}
+                    color={
+                      tableData?.status
+                        ? "var(--secondary-color)"
+                        : "var(--other-color)"
+                    }
+                    width={83}
+                    height={30}
+                    navigate={() =>
+                      toggleDepositStatus(tableData?._id, "", "kyc")
+                    }
+                  />
+                </div>
+              </div>
+            )}
           </section>
         </div>
       ) : (

@@ -28,13 +28,14 @@ const Dashboard = () => {
   const [depositLoading, setDepositLoading] = useState(false);
   const [failedLoading, setFailedLoading] = useState(false);
   const [userId, setUserId] = useState("");
+  const [kYCId, setKYCId] = useState("");
   const [updateStatus, setUpdateStatus] = useState(false);
   const [depositId, setDepositId] = useState(null);
   const [visibility, setVisibility] = useState(false);
+  const [endPoint, setEndPoint] = useState("");
   const navigate = useNavigate();
   const [deleteLoading, setDeleteLoader] = useState(false);
-  const { baseUrl, getAllUsers, getUserDeposits, getUserDetails } =
-    useGlobalContext();
+  const { baseUrl, getAllUsers, getUserDetails } = useGlobalContext();
 
   const toggleVisibility = () => setVisibility(!visibility);
 
@@ -70,30 +71,32 @@ const Dashboard = () => {
     setNotification(!notification);
   };
 
-  const toggleDepositStatus = (id, userID) => {
+  const toggleDepositStatus = (id, userID, endPoint) => {
     setDepositId(id);
+    setKYCId(id);
     setUserId(userID);
     setUpdateStatus(!updateStatus);
+    setEndPoint(endPoint);
   };
 
-  const updateDepositFailed = (id) => {
+  const updateKYC = (id) => {
     setFailedLoading(true);
     axios
       .put(
-        `${baseUrl}deposit/admin/${id}`,
+        `${baseUrl}kyc/${id}`,
         {
-          status: "failed",
+          status: true,
         },
-        { headers: { Authorization: `Bearer ${adminToken}` } }
+        { headers: { token: adminToken } }
       )
       .then((data) => {
         if (data.status === 200) {
-          getUserDeposits(id);
-          getUserDetails(id);
           setFailedLoading(false);
+          toast.success("User KYC Status Updated");
           setTimeout(() => {
-            navigate("/all-deposits");
+            navigate("/users");
             setUpdateStatus(!updateStatus);
+            setEndPoint("");
           }, 3000);
         }
       })
@@ -103,11 +106,11 @@ const Dashboard = () => {
   };
 
   // Update Deposit to Approved Status
-  const updateDepositApproved = (id) => {
+  const updateDepositApproved = () => {
     setDepositLoading(true);
     axios
       .put(
-        `${baseUrl}deposit/${id}`,
+        `${baseUrl}deposit/${depositId}`,
         {
           status: true,
         },
@@ -183,10 +186,12 @@ const Dashboard = () => {
             updateStatus={updateStatus}
             toggleActivateDeposit={toggleDepositStatus}
             updateDepositApproved={updateDepositApproved}
-            updateDepositFailed={updateDepositFailed}
             id={depositId}
             depositLoading={depositLoading}
             failedLoading={failedLoading}
+            endPoint={endPoint}
+            updateKYC={updateKYC}
+            kYCId={kYCId}
           />
         </div>
       </div>

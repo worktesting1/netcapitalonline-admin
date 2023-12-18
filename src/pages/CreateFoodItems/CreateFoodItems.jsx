@@ -26,8 +26,6 @@ const CreateFoodItems = () => {
   const [loadingTransfer, setLoadingT] = useState(false);
   const notify = () => toast.success("User Details Updated");
 
-  console.log(userDetails);
-
   const navigateBack = () => {
     navigate(`/user-details/${id}`);
   };

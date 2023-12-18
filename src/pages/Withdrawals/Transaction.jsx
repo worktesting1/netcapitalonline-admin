@@ -1,13 +1,17 @@
-import React,{useState} from "react";
+import React, { useEffect, useState } from "react";
 import "./Transaction.css";
 import moment from "moment";
 import { Button } from "../../components";
+import { useGlobalContext } from "../../context/context";
 
 const Withdrawals = () => {
-  const [withdrawHistory, setWithdrawHistory] = useState([]);
   const symbol = "R";
+  const { getWithdrawals, withdrawHistory } = useGlobalContext();
+  const adminToken = JSON.parse(sessionStorage.getItem("adminToken"));
 
- 
+  useEffect(() => {
+    getWithdrawals(adminToken);
+  }, []);
 
   return (
     <section>
@@ -19,7 +23,7 @@ const Withdrawals = () => {
               <h3>Date/Time</h3>
             </div>
             <div className="type">
-              <h3>Type</h3>
+              <h3>Name</h3>
             </div>
             <div className="amount">
               <h3>Amount</h3>
@@ -28,11 +32,14 @@ const Withdrawals = () => {
               <h3>Status</h3>
             </div>
             <div className="reference">
+              <h3>Bank Name</h3>
+            </div>
+            <div className="reference">
               <h3>Reference</h3>
             </div>
           </div>
           {withdrawHistory.map((item, index) => {
-            const { createdAt, ref, status, type, amount } = item;
+            const { createdAt, accountName, status, bankName, amount } = item;
 
             let date = moment(createdAt).format("MMMM do yyyy, h:mm:ss a");
             return (
@@ -41,7 +48,7 @@ const Withdrawals = () => {
                   <p>{date}</p>
                 </div>
                 <div className="type">
-                  <p>{type}</p>
+                  <p>{accountName}</p>
                 </div>
                 <div className="amount">
                   <p>
@@ -51,27 +58,18 @@ const Withdrawals = () => {
                 </div>
                 <div className="status">
                   <Button
-                    title={status}
+                    title={status ? "Approved" : "Pending"}
                     width={100}
                     height={30}
-                    background={
-                      status === "pending"
-                        ? "#FFF3E7"
-                        : status === "approved"
-                        ? "#EDFFF9"
-                        : ""
-                    }
-                    color={
-                      status === "pending"
-                        ? "#999DA1"
-                        : status === "approved"
-                        ? "27AE61"
-                        : "#FC6121"
-                    }
+                    background={!status ? "#FFF3E7" : "#EDFFF9"}
+                    color={!status ? "#999DA1" : "27AE61"}
                   />
                 </div>
                 <div className="reference">
-                  <p>{ref}</p>
+                  <p>{bankName}</p>
+                </div>
+                <div className="reference">
+                  <p>{bankName}</p>
                 </div>
               </div>
             );

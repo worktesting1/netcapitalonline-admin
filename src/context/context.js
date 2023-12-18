@@ -4,17 +4,20 @@ import "react-toastify/dist/ReactToastify.css";
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
-  // const baseUrl = "http://localhost:5000/api/";
-  const baseUrl = "https://profitmonitoring-api.onrender.com/api/";
+  const baseUrl = "http://localhost:5000/api/";
+  // const baseUrl = "https://profitmonitoring-api.onrender.com/api/";
 
   const [allDeposits, setAllDeposits] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
-  const [userDeposits, setUserDeposits] = useState([]);
+  const [userKyc, setUserKyc] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
   const [dLoading, setDLoading] = useState(false);
+  const [kLoading, setKLoading] = useState(false);
   const [userDLoading, setUserDLoading] = useState(false);
   const [usersLoading, setSLoading] = useState(false);
   const [userLoading, setUserLoading] = useState(false);
+  const [userKYC, setUserKYC] = useState([]);
+  const [withdrawHistory, setWithdrawHistory] = useState([]);
   const adminToken = JSON.parse(sessionStorage.getItem("adminToken"));
 
   // Get All Deposits
@@ -32,6 +35,41 @@ const AppProvider = ({ children }) => {
       })
       .catch((error) => {
         setDLoading(false);
+      });
+  };
+  const getWithdrawals = (token) => {
+    setDLoading(true);
+    axios
+      .get(`${baseUrl}transfer`, {
+        headers: { token: token },
+      })
+      .then((data) => {
+        if (data.status === 200) {
+          setWithdrawHistory(data.data.transfers);
+          setDLoading(false);
+        }
+      })
+      .catch((error) => {
+        setDLoading(false);
+      });
+  };
+
+  // GET USER KYC DETAILS
+
+  const getUserKyc = (id) => {
+    setSLoading(true);
+    axios
+      .get(`${baseUrl}kyc/${id}`, {
+        headers: { token: adminToken },
+      })
+      .then((data) => {
+        if (data.status === 200) {
+          setKLoading(false);
+          setUserKYC(data.data);
+        }
+      })
+      .catch((error) => {
+        setKLoading(false);
       });
   };
 
@@ -54,23 +92,21 @@ const AppProvider = ({ children }) => {
   };
 
   // Get User Deposits
-  const getUserDeposits = (id) => {
-    // setUserDLoading(true);
-    // axios
-    //   .get(`${baseUrl}deposit/${id}`, {
-    //     headers: { token: adminToken },
-    //   })
-    //   .then((data) => {
-    //     console.log(data);
-    //     if (data.status === 200) {
-    //       setUserDeposits(data.data);
-    //       setUserDLoading(false);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     setUserDLoading(false);
-    //     console.log(error);
-    //   });
+  const getAllKyc = () => {
+    setUserDLoading(true);
+    axios
+      .get(`${baseUrl}kyc`, {
+        headers: { token: adminToken },
+      })
+      .then((data) => {
+        if (data.status === 200) {
+          setUserKyc(data.data);
+          setUserDLoading(false);
+        }
+      })
+      .catch((error) => {
+        setUserDLoading(false);
+      });
   };
 
   // Get User Details
@@ -99,14 +135,19 @@ const AppProvider = ({ children }) => {
         allDeposits,
         getAllUsers,
         allUsers,
-        userDeposits,
-        getUserDeposits,
+        userKyc,
+        getAllKyc,
         getUserDetails,
         userDetails,
         dLoading,
         usersLoading,
         userLoading,
         userDLoading,
+        getUserKyc,
+        userKYC,
+        kLoading,
+        getWithdrawals,
+        withdrawHistory,
       }}
     >
       {children}
