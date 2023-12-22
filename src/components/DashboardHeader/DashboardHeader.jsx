@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./DashboardHeader.css";
-import LoginImageHero from "../../asset/profit.svg";
+import LoginImageHero from "../../asset/Logo.svg";
 import { RiMenu3Line } from "react-icons/ri";
 
 const DashboardHeader = ({ toggleVisibility }) => {
