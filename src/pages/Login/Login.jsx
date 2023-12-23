@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import { ColorRing } from "react-loader-spinner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useGlobalContext } from "../../context/context";
@@ -13,6 +12,7 @@ import { useGlobalContext } from "../../context/context";
 const Login = () => {
   const { baseUrl } = useGlobalContext();
   const [loading, setLoading] = useState(false);
+  const [wait, setwait] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -23,10 +23,16 @@ const Login = () => {
 
   const handleLogin = (data) => {
     setLoading(true);
+    setTimeout(() => {
+      setwait(true);
+    }, 10000);
     axios
       .post(`${baseUrl}auth/admin`, data)
       .then((data) => {
         if (data.status === 200) {
+          if (wait) {
+            setwait(false);
+          }
           setLoading(false);
           sessionStorage.setItem(
             "adminToken",
@@ -37,6 +43,8 @@ const Login = () => {
       })
       .catch((error) => {
         setLoading(false);
+        setwait(false);
+
         if (error.response.data === "Wrong credentials") {
           toast.error("Email or Password is not registered");
         }
@@ -87,8 +95,10 @@ const Login = () => {
               <span> {errors.password?.message}</span>
             </div>
             <button style={{ backgroundColor: "#27AE61" }} className="btn">
-              {loading ? (
+              {wait ? (
                 "Please Wait! while we load contents for security reasons"
+              ) : loading ? (
+                "Loading..."
               ) : (
                 <span>Login</span>
               )}

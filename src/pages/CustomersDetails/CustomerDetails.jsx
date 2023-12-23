@@ -14,7 +14,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
   const formatter = new Intl.NumberFormat("en-US");
   const navigate = useNavigate();
   const { id } = useParams();
-  const symbol = "R";
+  const symbol = "$";
   const {
     allDeposits,
     getUserDetails,
