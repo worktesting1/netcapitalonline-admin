@@ -5,7 +5,6 @@ import { useGlobalContext } from "../../context/context";
 import { ColorRing } from "react-loader-spinner";
 
 const Order = () => {
-  const symbol = "R";
   const adminToken = JSON.parse(sessionStorage.getItem("adminToken"));
   const {
     getAllDeposits,

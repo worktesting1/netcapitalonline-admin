@@ -116,7 +116,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
                   colors={["black", "black", "black", "black", "black"]}
                 />
               ) : (
-                ` ${symbol}
+                ` ${country?.symbol ? country?.symbol : symbol}
                ${formatter.format(profit)}`
               )}
             </h3>
@@ -137,7 +137,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
                   colors={["black", "black", "black", "black", "black"]}
                 />
               ) : (
-                ` ${symbol}
+                ` ${country?.symbol ? country?.symbol : symbol}
               ${formatter.format(bonus)}`
               )}
             </h3>
@@ -158,7 +158,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
                   colors={["black", "black", "black", "black", "black"]}
                 />
               ) : (
-                ` ${symbol}
+                ` ${country?.symbol ? country?.symbol : symbol}
                 ${formatter.format(getPendingDepositsAmount())}`
               )}
             </h3>
@@ -179,7 +179,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
                   colors={["black", "black", "black", "black", "black"]}
                 />
               ) : (
-                `${symbol}
+                `${country?.symbol ? country?.symbol : symbol}
               ${formatter.format(0)}`
               )}
             </h3>
@@ -200,7 +200,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
                   colors={["black", "black", "black", "black", "black"]}
                 />
               ) : (
-                `${symbol}
+                `${country?.symbol ? country?.symbol : symbol}
               ${formatter.format(getSuccessfulDepositsAmount())}`
               )}
             </h3>
@@ -258,7 +258,10 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
         </div>
         <div className="add_food_item_form_item_eigth">
           <p className="add_food_item_form_labels">Country</p>
-          <input defaultValue={country} className="food_item_inputs" />
+          <input
+            defaultValue={country?.name ? country?.name : country}
+            className="food_item_inputs"
+          />
         </div>
         <div className="add_food_item_form_item_nine">
           <p className="add_food_item_form_labels">Password</p>

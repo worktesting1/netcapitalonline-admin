@@ -5,6 +5,7 @@ import Delete from "../../asset/delete.svg";
 import { Link, useNavigate } from "react-router-dom";
 import moment from "moment/moment";
 import { ColorRing } from "react-loader-spinner";
+import { useGlobalContext } from "../../context/context";
 
 const TableBody = ({
   path,
@@ -14,6 +15,9 @@ const TableBody = ({
   toggleDepositStatus,
   loading,
 }) => {
+  const { userDetails } = useGlobalContext();
+
+  const { country } = userDetails;
   const [status, setStatus] = useState(true);
   const symbol = "$";
   const navigate = useNavigate();
@@ -76,13 +80,13 @@ const TableBody = ({
                   >
                     <div className={`table_body_header_item_1`}>
                       <p className="food_item_paragraphs">
-                        {symbol}
+                        {country?.symbol ? country?.symbol : symbol}
                         {profit}
                       </p>
                     </div>
                     <div className={`table_body_header_item_2`}>
                       <p className="food_item_paragraphs">
-                        {symbol}
+                        {country?.symbol ? country?.symbol : symbol}
                         {bonus}
                       </p>
                     </div>
@@ -101,19 +105,19 @@ const TableBody = ({
                     </div>
                     <div className={`table_body_header_item_6`}>
                       <p className="food_item_paragraphs">
-                        {symbol}
+                        {country?.symbol ? country?.symbol : symbol}
                         {0}
                       </p>
                     </div>
                     <div className={`table_body_header_item_7`}>
                       <p className="food_item_paragraphs">
-                        {symbol}
+                        {country?.symbol ? country?.symbol : symbol}
                         {deposits}
                       </p>
                     </div>
                     <div className={`table_body_header_item_8`}>
                       <p className="food_item_paragraphs">
-                        {symbol}
+                        {country?.symbol ? country?.symbol : symbol}
                         {pendingDeposits}
                       </p>
                     </div>
@@ -249,7 +253,9 @@ const TableBody = ({
                       <p className="food_item_paragraphs">{email}</p>
                     </div>
                     <div className={`table_body_header_item_7`}>
-                      <p className="food_item_paragraphs">{country}</p>
+                      <p className="food_item_paragraphs">
+                        {country?.name ? country?.name : country}
+                      </p>
                     </div>
                     <div className={`table_body_header_item_8`}>
                       <Button
@@ -330,7 +336,7 @@ const TableBody = ({
                       </div>
                       <div className={`table_body_header_item_3`}>
                         <p className="food_item_paragraphs">
-                          {symbol}
+                          {country?.symbol ? country?.symbol : symbol}
                           {amount}
                         </p>
                       </div>
