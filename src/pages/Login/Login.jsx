@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
-import LoginImageHero from "../../asset/Logo.svg";
+import LoginImageHero from "../../asset/Logo (5).png";
 import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
