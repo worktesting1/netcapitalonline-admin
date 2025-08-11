@@ -7,7 +7,7 @@ const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
   // const baseUrl = "http://localhost:5000/api/";
-  const baseUrl = "https://netcapitalonline-api.onrender.com/api/";
+  const baseUrl = "https://wealthwise-0u70.onrender.com/api/";
 
   const [allDeposits, setAllDeposits] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
