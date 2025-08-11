@@ -13,6 +13,7 @@ const ActivateDeposit = ({
   endPoint,
   updateKYC,
   kYCId,
+  updateDepositFailed,
 }) => {
   return (
     <>
@@ -51,7 +52,6 @@ const ActivateDeposit = ({
                   height={40}
                   fontsize={15}
                   color={"white"}
-                  navigate={() => ""}
                 />
               )}
             </div>
@@ -92,7 +92,7 @@ const ActivateDeposit = ({
                 height={40}
                 fontsize={15}
                 color={"white"}
-                navigate={() => ""}
+                navigate={() => updateDepositFailed(id)}
               />
             </div>
           </div>

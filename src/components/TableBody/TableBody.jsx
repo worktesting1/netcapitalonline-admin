@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./TableBody.css";
 import Button from "../Button/Button";
 import Delete from "../../asset/delete.svg";
@@ -6,6 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import moment from "moment/moment";
 import { ColorRing } from "react-loader-spinner";
 import { useGlobalContext } from "../../context/context";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const TableBody = ({
   path,
@@ -14,13 +16,68 @@ const TableBody = ({
   tableData,
   toggleDepositStatus,
   loading,
+  toggleWithdrawalStatus,
 }) => {
-  const { userDetails } = useGlobalContext();
+  const { userDetails, getAllLoans, baseUrl, getAllCards, getUserDetails } =
+    useGlobalContext();
 
   const { country } = userDetails;
   const [status, setStatus] = useState(true);
+  const [loader, setLoader] = useState(false);
+  const [toggleCard, settoggleCard] = useState(false);
+
   const symbol = "$";
   const navigate = useNavigate();
+  const adminToken = JSON.parse(sessionStorage.getItem("adminToken"));
+
+  const handleApprovedLoan = (id, status, email) => {
+    if (status !== "true") {
+      setLoader(true);
+      axios
+        .put(
+          `${baseUrl}loan/${id}`,
+          {
+            status: "true",
+            email: email,
+          },
+          { headers: { token: adminToken } }
+        )
+        .then((data) => {
+          if (data.status === 200) {
+            setLoader(false);
+            getAllLoans(adminToken);
+            toast.success("Loan Approved");
+          }
+        })
+        .catch((error) => {
+          setLoader(false);
+        });
+    }
+  };
+
+  const toggleCardList = () => settoggleCard(!toggleCard);
+
+  const toggleCardStatus = (cardId, status, userId) => {
+    axios
+      .put(
+        `${baseUrl}card/${cardId}`,
+        { status },
+        { headers: { token: adminToken } }
+      )
+      .then((response) => {
+        toggleCardList();
+        getAllCards(adminToken);
+        getUserDetails(userId);
+        if (response.data.status === "approved") {
+          toast.success("Card Approved");
+        } else {
+          toast.success("Card Cancelled");
+        }
+      })
+      .catch((error) => {
+        toggleCardList();
+      });
+  };
 
   return (
     <>
@@ -320,7 +377,7 @@ const TableBody = ({
                     updatedAt,
                     createdAt,
                     amount,
-                    transactiontype,
+                    transactionType,
                     image,
                     status,
                     _id,
@@ -332,7 +389,7 @@ const TableBody = ({
                         <p className="food_item_paragraphs">{index + 1}</p>
                       </div>
                       <div className={`table_body_header_item_2`}>
-                        <p className="paginators_numbers">{transactiontype}</p>
+                        <p className="paginators_numbers">{transactionType}</p>
                       </div>
                       <div className={`table_body_header_item_3`}>
                         <p className="food_item_paragraphs">
@@ -362,10 +419,20 @@ const TableBody = ({
                       </div>
                       <div className={`table_body_header_item_8`}>
                         <Button
-                          background={status ? "#EDFFF9" : "#FFF3E7"}
-                          title={status ? "Approved" : "Pending"}
+                          background={
+                            status === "approved" ? "#EDFFF9" : "#FFF3E7"
+                          }
+                          title={
+                            status === "approved"
+                              ? "Approved"
+                              : status === "pending"
+                              ? "Pending"
+                              : "failed"
+                          }
                           color={
-                            status ? "var(--secondary-color)" : "var(--color1)"
+                            status === "approved"
+                              ? "var(--secondary-color)"
+                              : "var(--color1)"
                           }
                           width={83}
                           height={30}
@@ -407,12 +474,10 @@ const TableBody = ({
                   <p className="food_item_paragraphs">{tableData?.__v + 1}</p>
                 </div>
                 <div className={`table_body_header_item_2`}>
-                  <p className="paginators_numbers">
-                    {tableData?._id.slice(0, 7)}
-                  </p>
+                  <p className="paginators_numbers">{tableData?.idName}</p>
                 </div>
                 <div className={`table_body_header_item_3`}>
-                  <p className="food_item_paragraphs">{tableData?.idname}</p>
+                  <p className="food_item_paragraphs">{tableData?.name}</p>
                 </div>
                 <div className={`table_body_header_item_4`}>
                   <p className="food_item_paragraphs">
@@ -420,7 +485,7 @@ const TableBody = ({
                   </p>
                 </div>
                 <div className={`table_body_header_item_5`}>
-                  <p className="food_item_paragraphs">{tableData?.idnumber}</p>
+                  <p className="food_item_paragraphs">{tableData?.idNumber}</p>
                 </div>
                 <div className={`table_body_header_item_6`}>
                   <img
@@ -452,10 +517,100 @@ const TableBody = ({
             )}
           </section>
         </div>
-      ) : (
+      ) : order === "loans" ? (
+        <section className="table_body">
+          <div className="loan_table_body_header table_body_header">
+            {[
+              "S/n",
+              "Loan Type",
+              "Created At",
+              "Reference Number",
+              "Term",
+              "Amount",
+              "action",
+            ].map((item, index) => (
+              <div
+                key={index}
+                className={`table_body_header_item_${1 + index}`}
+              >
+                <p className="table_body_header_text">{item}</p>
+              </div>
+            ))}
+          </div>
+          <>
+            {loading ? (
+              <div className="list_loader">
+                <ColorRing
+                  visible={true}
+                  height="60"
+                  width="60"
+                  ariaLabel="blocks-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="blocks-wrapper"
+                  colors={["black", "black", "black", "black", "black"]}
+                />
+              </div>
+            ) : (
+              tableData &&
+              tableData.map((item, index) => {
+                const {
+                  _id,
+                  amount,
+                  createdAt,
+                  referenceNumber,
+                  status,
+                  email,
+                  loanType,
+                  term,
+                } = item;
+                return (
+                  <div
+                    key={index}
+                    className="loan_table_body_body table_body_body"
+                  >
+                    <div className={`table_body_header_item_1`}>
+                      <p className="food_item_paragraphs">{index + 1}</p>
+                    </div>
+                    <div className={`table_body_header_item_2`}>
+                      <p className="food_item_paragraphs">{loanType}</p>
+                    </div>
+                    <div className={`table_body_header_item_3`}>
+                      <p className="food_item_paragraphs">
+                        {moment(createdAt).format("MMMM Do YYYY, h:mm")}
+                      </p>
+                    </div>
+                    <div className={`table_body_header_item_4`}>
+                      <p className="food_item_paragraphs">{referenceNumber}</p>
+                    </div>
+                    <div className={`table_body_header_item_5`}>
+                      <p className="food_item_paragraphs">${amount}</p>
+                    </div>
+                    <div className={`table_body_header_item_6`}>
+                      <p className="food_item_paragraphs">{term}</p>
+                    </div>
+
+                    <div className={`table_body_header_item_7`}>
+                      <button
+                        className="update_wallet_btn btn"
+                        onClick={() => handleApprovedLoan(_id, status, email)}
+                      >
+                        {loader
+                          ? "Loading..."
+                          : status === "pending"
+                          ? "Pending"
+                          : "Approved"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </>
+        </section>
+      ) : order === "customers_card_details" ? (
         <section className="table_body">
           <div className="table_body_header">
-            {["S/n", "Name", "Wallet Address", "updated at", "action"].map(
+            {["S/n", "CCV", "Created At", "Card Number", "Name", "status"].map(
               (item, index) => (
                 <div
                   key={index}
@@ -480,31 +635,158 @@ const TableBody = ({
                 />
               </div>
             ) : (
-              tableData &&
-              tableData.map((item, index) => {
-                const { walletName, address, _id, updatedAt } = item;
+              tableData?.map((item, index) => {
+                const {
+                  name,
+                  ccv,
+                  cardNumber,
+                  _id,
+                  status,
+                  createdAt,
+                  userId,
+                } = item;
+                console.log(item);
                 return (
                   <div key={index} className="table_body_body">
                     <div className={`table_body_header_item_1`}>
                       <p className="food_item_paragraphs">{index + 1}</p>
                     </div>
                     <div className={`table_body_header_item_2`}>
-                      <p className="paginators_numbers">{walletName}</p>
+                      <p className="paginators_numbers">{ccv}</p>
                     </div>
                     <div className={`table_body_header_item_3`}>
-                      <p className="food_item_paragraphs">{address}</p>
+                      {moment(createdAt).format("MMMM Do YYYY, h:mm")}
                     </div>
                     <div className={`table_body_header_item_4`}>
-                      <p className="food_item_paragraphs">
-                        {moment(updatedAt).format("MMMM Do YYYY, h:mm")}
-                      </p>
+                      <p className="food_item_paragraphs">{cardNumber}</p>
+                    </div>
+                    <div className={`table_body_header_item_5`}>{name}</div>
+
+                    <div className={`table_body_header_item_6`}>
+                      <Button
+                        navigate={toggleCardList}
+                        background={
+                          status === "pending" || status === "failed"
+                            ? "#FFF3E7"
+                            : "#EDFFF9"
+                        }
+                        title={
+                          status === "approved"
+                            ? "Approved"
+                            : status === "pending"
+                            ? "Pending"
+                            : "Failed"
+                        }
+                        color={
+                          status === "approved"
+                            ? "#27AE61"
+                            : "var(--other-color)"
+                        }
+                        width={83}
+                        height={30}
+                      />
+
+                      <ul className={`${toggleCard ? "" : "toggle_list"}`}>
+                        <li
+                          onClick={() =>
+                            toggleCardStatus(_id, "failed", userId)
+                          }
+                        >
+                          failed
+                        </li>
+                        <li
+                          onClick={() =>
+                            toggleCardStatus(_id, "approved", userId)
+                          }
+                        >
+                          approved
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </>
+        </section>
+      ) : (
+        <section className="table_body">
+          <div className="table_body_header">
+            {[
+              "S/n",
+              "BankName",
+              "Transaction Type",
+              "createdAt",
+              "AccountNumber",
+              "AccountName",
+              "action",
+            ].map((item, index) => (
+              <div
+                key={index}
+                className={`table_body_header_item_${1 + index}`}
+              >
+                <p className="table_body_header_text">{item}</p>
+              </div>
+            ))}
+          </div>
+          <>
+            {loading ? (
+              <div className="list_loader">
+                <ColorRing
+                  visible={true}
+                  height="60"
+                  width="60"
+                  ariaLabel="blocks-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="blocks-wrapper"
+                  colors={["black", "black", "black", "black", "black"]}
+                />
+              </div>
+            ) : (
+              tableData &&
+              tableData.map((item, index) => {
+                const {
+                  bankName,
+                  transferType,
+                  createdAt,
+                  accountName,
+                  accountNumber,
+                  status,
+                  _id,
+                  userId,
+                } = item;
+                return (
+                  <div key={index} className="table_body_body">
+                    <div className={`table_body_header_item_1`}>
+                      <p className="food_item_paragraphs">{index + 1}</p>
+                    </div>
+                    <div className={`table_body_header_item_2`}>
+                      <p className="paginators_numbers">{transferType}</p>
+                    </div>
+                    <div className={`table_body_header_item_3`}>
+                      <p className="food_item_paragraphs">{bankName}</p>
+                    </div>
+                    <div className={`table_body_header_item_4`}>
+                      <p className="food_item_paragraphs">{accountNumber}</p>
                     </div>
                     <div className={`table_body_header_item_5`}>
-                      <Link to={`/${path}/${_id}`}>
-                        <button className="update_wallet_btn btn">
-                          Update Wallet
+                      <p className="food_item_paragraphs">{accountName}</p>
+                    </div>
+
+                    <div className={`table_body_header_item_6`}>
+                      <p className="food_item_paragraphs">
+                        {moment(createdAt).format("MMMM Do YYYY, h:mm")}
+                      </p>
+                    </div>
+                    <div className={`table_body_header_item_7`}>
+                      <div>
+                        <button
+                          onClick={() => toggleWithdrawalStatus(_id, userId)}
+                          className="update_wallet_btn btn"
+                        >
+                          {status}
                         </button>
-                      </Link>
+                      </div>
                     </div>
                   </div>
                 );

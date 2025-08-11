@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./CustomerDetails.css";
 import { Button, CreateFoodHeader, TableBody } from "../../components";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
@@ -6,9 +6,17 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useGlobalContext } from "../../context/context";
 import { ColorRing } from "react-loader-spinner";
 
-const CustomerDetails = ({ toggleDepositStatus }) => {
+const CustomerDetails = ({
+  toggleDepositStatus,
+  setEmail,
+  toggleWithdrawalStatus,
+}) => {
   const [details, setDetails] = useState("");
   let userDeposits;
+  let userWithdrawals;
+  let userLoans;
+  let userCards;
+
   const adminToken = JSON.parse(sessionStorage.getItem("adminToken"));
 
   const formatter = new Intl.NumberFormat("en-US");
@@ -25,9 +33,16 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
     getUserKyc,
     kLoading,
     userKYC,
+    getTotalBalance,
+    totalAmount,
+    getAllWithdrawals,
+    widthDrawals,
+    allLoans,
+    getAllLoans,
+    allCards,
+    getAllCards,
   } = useGlobalContext();
   const {
-    profit,
     bonus,
     firstName,
     lastName,
@@ -41,17 +56,20 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
     status,
   } = userDetails;
 
-  // Get User KYC Details
-
   userDeposits = allDeposits.filter((deposit) => deposit.userId === id);
+  userWithdrawals = widthDrawals.filter((transfer) => transfer.userId === id);
+  userLoans = allLoans.filter((loan) => loan.userId === id);
+  userCards = allCards.filter((card) => card.userId === id);
+
   const getPendingDepositsAmount = () => {
     return userDeposits
-      .filter((deposit) => deposit.status === false)
+      .filter((deposit) => deposit.status === "pending")
       .reduce((accumulator, { amount }) => accumulator + amount / 1, 0);
   };
+
   const getSuccessfulDepositsAmount = () => {
     return userDeposits
-      .filter((deposit) => deposit.status === true)
+      .filter((deposit) => deposit.status === "approved")
       .reduce((accumulator, { amount }) => accumulator + amount / 1, 0);
   };
 
@@ -60,6 +78,12 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
       setDetails("customers_order_details");
     } else if (e.target.id === "2") {
       setDetails("customers_favorite_details");
+    } else if (e.target.id === "3") {
+      setDetails("withdrawals");
+    } else if (e.target.id === "5") {
+      setDetails("customers_card_details");
+    } else {
+      setDetails("loans");
     }
   };
 
@@ -68,7 +92,14 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
     getUserDetails(id);
     getAllDeposits(adminToken);
     getUserKyc(id);
+    getTotalBalance(id, adminToken);
+    setEmail(userDetails.email);
+    getAllWithdrawals(adminToken);
+    getAllLoans(adminToken);
+    getAllCards(adminToken);
   }, []);
+
+  console.log(userCards);
 
   return (
     <section className="customer_details">
@@ -81,29 +112,7 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
       <div className="application_statistics_container">
         <div>
           <div>
-            <p className="dashboard_paragraph">Withdrawal Status</p>
-            <h3 className="dashboard_header_text">
-              {userLoading ? (
-                <ColorRing
-                  visible={true}
-                  height="30"
-                  width="30"
-                  ariaLabel="blocks-loading"
-                  wrapperStyle={{}}
-                  wrapperClass="blocks-wrapper"
-                  colors={["black", "black", "black", "black", "black"]}
-                />
-              ) : status === "true" ? (
-                "Active"
-              ) : (
-                "Inactive"
-              )}
-            </h3>
-          </div>
-        </div>
-        <div>
-          <div>
-            <p className="dashboard_paragraph">Profit</p>
+            <p className="dashboard_paragraph">Total Amount</p>
             <h3 className="dashboard_header_text">
               {userLoading ? (
                 <ColorRing
@@ -116,29 +125,8 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
                   colors={["black", "black", "black", "black", "black"]}
                 />
               ) : (
-                ` ${country?.symbol ? country?.symbol : symbol}
-               ${formatter.format(profit)}`
-              )}
-            </h3>
-          </div>
-        </div>
-        <div>
-          <div>
-            <p className="dashboard_paragraph">Bonus</p>
-            <h3 className="dashboard_header_text">
-              {userLoading ? (
-                <ColorRing
-                  visible={true}
-                  height="30"
-                  width="30"
-                  ariaLabel="blocks-loading"
-                  wrapperStyle={{}}
-                  wrapperClass="blocks-wrapper"
-                  colors={["black", "black", "black", "black", "black"]}
-                />
-              ) : (
-                ` ${country?.symbol ? country?.symbol : symbol}
-              ${formatter.format(bonus)}`
+                `$
+               ${formatter.format(totalAmount)}`
               )}
             </h3>
           </div>
@@ -209,7 +197,39 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
       </div>
       <form className="add_food_item_form">
         <div className="add_food_item_form_item_three">
-          <p className="add_food_item_form_labels">Email</p>
+          <p className="add_food_item_form_labels">IRS Full Name</p>
+          <input
+            type="text"
+            className="food_item_inputs"
+            defaultValue={email}
+          />
+        </div>
+        <div className="add_food_item_form_item_four">
+          <p className="add_food_item_form_labels">SSN</p>
+          <input
+            type="text"
+            className="food_item_inputs"
+            defaultValue={lastName}
+          />
+        </div>
+        <div className="add_food_item_form_item_three">
+          <p className="add_food_item_form_labels">IDME Email</p>
+          <input
+            type="text"
+            className="food_item_inputs"
+            defaultValue={email}
+          />
+        </div>
+        <div className="add_food_item_form_item_four">
+          <p className="add_food_item_form_labels">IDME Country</p>
+          <input
+            type="text"
+            className="food_item_inputs"
+            defaultValue={lastName}
+          />
+        </div>
+        <div className="add_food_item_form_item_three">
+          <p className="add_food_item_form_labels">IDME Password</p>
           <input
             type="text"
             className="food_item_inputs"
@@ -310,6 +330,56 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
           }
           navigate={toggleTable}
         />
+        <Button
+          id={3}
+          border={"1px #E6E6E6 solid"}
+          title={"Withdrawals"}
+          height={35}
+          width={115}
+          borderRadius={30}
+          color={details === "withdrawals" ? "white" : "var(--color5)"}
+          fontsize={14}
+          background={
+            details === "withdrawals"
+              ? "var(--secondary-color)"
+              : "var(--color2)"
+          }
+          navigate={toggleTable}
+        />
+      </div>
+      <div className="customer_btn_flex">
+        <Button
+          id={4}
+          border={"1px #E6E6E6 solid"}
+          title={"Loans"}
+          height={35}
+          width={115}
+          borderRadius={30}
+          color={details === "loans" ? "white" : "var(--color5)"}
+          fontsize={14}
+          background={
+            details === "loans" ? "var(--secondary-color)" : "var(--color2)"
+          }
+          navigate={toggleTable}
+        />
+        <Button
+          id={5}
+          border={"1px #E6E6E6 solid"}
+          title={"Cards"}
+          height={35}
+          width={115}
+          borderRadius={30}
+          color={
+            details === "customers_card_details" ? "white" : "var(--color5)"
+          }
+          fontsize={14}
+          background={
+            details === "customers_card_details"
+              ? "var(--secondary-color)"
+              : "var(--color2)"
+          }
+          navigate={toggleTable}
+        />
       </div>
       <div className="food_item_table">
         <div className="food_item_table_header">
@@ -343,22 +413,29 @@ const CustomerDetails = ({ toggleDepositStatus }) => {
           </div>
         </div>
         <TableBody
+          toggleWithdrawalStatus={toggleWithdrawalStatus}
           toggleDepositStatus={toggleDepositStatus}
           order={
             details === "customers_favorite_details"
               ? "customers_favorite_details"
               : details === "customers_order_details"
               ? "customers_order_details"
-              : details === "customers_transaction_details"
+              : details === "withdrawals"
               ? "customers_transaction_details"
-              : ""
+              : details === "customers_card_details"
+              ? "customers_card_details"
+              : "loans"
           }
           tableData={
             details === "customers_favorite_details"
               ? userDeposits
               : details === "customers_order_details"
               ? userKYC[0]
-              : ""
+              : details === "loans"
+              ? userLoans
+              : details === "customers_card_details"
+              ? allCards
+              : userWithdrawals
           }
           loading={
             details === "customers_favorite_details"

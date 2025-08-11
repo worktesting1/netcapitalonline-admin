@@ -1,11 +1,13 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
-  // const baseUrl = "http://localhost:5000/api/";
-  const baseUrl = "https://netcapitalonline-api.onrender.com/api/";
+  const baseUrl = "http://localhost:5000/api/";
+  // const baseUrl = "https://netcapitalonline-api.onrender.com/api/";
 
   const [allDeposits, setAllDeposits] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
@@ -16,8 +18,17 @@ const AppProvider = ({ children }) => {
   const [userDLoading, setUserDLoading] = useState(false);
   const [usersLoading, setSLoading] = useState(false);
   const [userLoading, setUserLoading] = useState(false);
+  const [allLoans, setAllLoans] = useState([]);
   const [userKYC, setUserKYC] = useState([]);
-  const [withdrawHistory, setWithdrawHistory] = useState([]);
+  const [widthDrawals, setWidthDrawals] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [widthDrawalsLoading, setWidthDrawalsLoading] = useState(false);
+  const [fundingRequests, setFundingRequests] = useState([]);
+  const [wLoading, setWLoading] = useState(false);
+  const [allCards, setAllCards] = useState([]);
+  const [cardLoader, setCardLoader] = useState(false);
+  const navigate = useNavigate();
+
   const adminToken = JSON.parse(sessionStorage.getItem("adminToken"));
 
   // Get All Deposits
@@ -37,20 +48,32 @@ const AppProvider = ({ children }) => {
         setDLoading(false);
       });
   };
-  const getWithdrawals = (token) => {
-    setDLoading(true);
+  const getAllFundingRequest = (token) => {
     axios
-      .get(`${baseUrl}transfer`, {
+      .get(`${baseUrl}admin/funding-requests`, {
         headers: { token: token },
       })
       .then((data) => {
-        if (data.status === 200) {
-          setWithdrawHistory(data.data.transfers);
-          setDLoading(false);
+        setFundingRequests(data.data.requests);
+      })
+      .catch((error) => {});
+  };
+  const getAllWithdrawals = (token) => {
+    setWidthDrawalsLoading(true);
+    axios
+      .get(`${baseUrl}withdraw`, {
+        headers: { token: token },
+      })
+      .then((response) => {
+        console.log(response);
+
+        if (response.status === 200) {
+          setWidthDrawals(response.data.withdrawals);
+          setWidthDrawalsLoading(false);
         }
       })
       .catch((error) => {
-        setDLoading(false);
+        // setWidthDrawalsLoading(false);
       });
   };
 
@@ -109,6 +132,35 @@ const AppProvider = ({ children }) => {
       });
   };
 
+  const withdrawalFailed = (id, userId) => {
+    setWLoading(true);
+    axios
+      .put(
+        `${baseUrl}wallet/withdrawals/approve/${id}`,
+        {
+          status: "failed",
+        },
+        { headers: { token: adminToken } }
+      )
+      .then((data) => {
+        if (data.status === 200) {
+          setWLoading(false);
+          getUserDetails(userId);
+          toast.success("Withdrawal Reject");
+          setTimeout(() => {
+            navigate("/all-withdrawals");
+          }, 2000);
+        }
+      })
+      .catch((error) => {
+        if (error.response.data.message === "Withdrawal already finalized") {
+          toast.error("Withdrawal already finalized");
+        }
+
+        setWLoading(false);
+      });
+  };
+
   // Get User Details
   const getUserDetails = (id) => {
     setUserLoading(true);
@@ -127,6 +179,49 @@ const AppProvider = ({ children }) => {
       });
   };
 
+  const getTotalBalance = (userId, token) => {
+    axios
+      .get(`${baseUrl}wallet/${userId}`, { headers: { token } })
+      .then((response) => {
+        setTotalAmount(response.data.balanceUSD);
+      })
+      .catch((error) => {});
+  };
+
+  const getAllLoans = (token) => {
+    axios
+      .get(`${baseUrl}loan`, {
+        headers: { token: token },
+      })
+      .then((data) => {
+        if (data.status === 200) {
+          setAllLoans(data.data.loan);
+        }
+      })
+      .catch((error) => {});
+  };
+
+  // Get All Cards
+  const getAllCards = (token) => {
+    setCardLoader(true);
+    axios
+      .get(`${baseUrl}card`, {
+        headers: { token: token },
+      })
+      .then((data) => {
+        console.log(data);
+
+        if (data.status === 200) {
+          setAllCards(data.data.cards);
+          setCardLoader(false);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+
+        setCardLoader(false);
+      });
+  };
   return (
     <AppContext.Provider
       value={{
@@ -146,8 +241,20 @@ const AppProvider = ({ children }) => {
         getUserKyc,
         userKYC,
         kLoading,
-        getWithdrawals,
-        withdrawHistory,
+        getAllFundingRequest,
+        fundingRequests,
+        widthDrawals,
+        widthDrawalsLoading,
+        getAllWithdrawals,
+        getTotalBalance,
+        totalAmount,
+        wLoading,
+        withdrawalFailed,
+        allLoans,
+        getAllLoans,
+        cardLoader,
+        getAllCards,
+        allCards,
       }}
     >
       {children}

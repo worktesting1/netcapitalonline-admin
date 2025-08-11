@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./Transaction.css";
 import moment from "moment";
 import { Button } from "../../components";
 import { useGlobalContext } from "../../context/context";
+import { ColorRing } from "react-loader-spinner";
 
-const Withdrawals = () => {
-  const symbol = "R";
-  const { getWithdrawals, withdrawHistory } = useGlobalContext();
+const Deposits = () => {
+  const { widthDrawals, getAllWithdrawals, widthDrawalsLoading, userDetails } =
+    useGlobalContext();
+  const { country } = userDetails;
   const adminToken = JSON.parse(sessionStorage.getItem("adminToken"));
 
-  useEffect(() => {
-    getWithdrawals(adminToken);
-  }, []);
+  const symbol = country?.symbol;
 
+  useEffect(() => {
+    getAllWithdrawals(adminToken);
+  }, []);
   return (
     <section>
       <div className="transaction_sect">
@@ -23,7 +26,7 @@ const Withdrawals = () => {
               <h3>Date/Time</h3>
             </div>
             <div className="type">
-              <h3>Name</h3>
+              <h3>Type</h3>
             </div>
             <div className="amount">
               <h3>Amount</h3>
@@ -32,52 +35,77 @@ const Withdrawals = () => {
               <h3>Status</h3>
             </div>
             <div className="reference">
-              <h3>Bank Name</h3>
-            </div>
-            <div className="reference">
-              <h3>Reference</h3>
+              <h3>Update Date</h3>
             </div>
           </div>
-          {withdrawHistory.map((item, index) => {
-            const { createdAt, accountName, status, bankName, amount } = item;
+          {widthDrawalsLoading ? (
+            <div className="list_loader">
+              <ColorRing
+                visible={true}
+                height="60"
+                width="60"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={["black", "black", "black", "black", "black"]}
+              />
+            </div>
+          ) : (
+            widthDrawals.map((item, index) => {
+              const { createdAt, transferType, status, amount, updatedAt } =
+                item;
 
-            let date = moment(createdAt).format("MMMM do yyyy, h:mm:ss a");
-            return (
-              <div key={index} className="transaction_table_body">
-                <div className="date">
-                  <p>{date}</p>
+              let date = moment(createdAt).format("MMMM Do YYYY, h:mm:ss a");
+              return (
+                <div key={index} className="transaction_table_body">
+                  <div className="date">
+                    <p>{date}</p>
+                  </div>
+                  <div className="type">
+                    <p>{transferType}</p>
+                  </div>
+                  <div className="amount">
+                    <p>
+                      {symbol}
+                      {amount}
+                    </p>
+                  </div>
+                  <div className="status">
+                    <Button
+                      title={
+                        status === "approved"
+                          ? "Approved"
+                          : status === "failed"
+                          ? "Failed"
+                          : "Pending"
+                      }
+                      width={100}
+                      height={30}
+                      background={
+                        status === "failed"
+                          ? "#FFF3E7"
+                          : status === "approve"
+                          ? "#EDFFF9"
+                          : "#FFF3E7"
+                      }
+                      color={
+                        status === "failed" || status === "pending"
+                          ? "#999DA1"
+                          : "27AE61"
+                      }
+                    />
+                  </div>
+                  <div className="reference">
+                    <p>{moment(updatedAt).format("MMMM Do YYYY, h:mm:ss a")}</p>
+                  </div>
                 </div>
-                <div className="type">
-                  <p>{accountName}</p>
-                </div>
-                <div className="amount">
-                  <p>
-                    {symbol}
-                    {amount}
-                  </p>
-                </div>
-                <div className="status">
-                  <Button
-                    title={status ? "Approved" : "Pending"}
-                    width={100}
-                    height={30}
-                    background={!status ? "#FFF3E7" : "#EDFFF9"}
-                    color={!status ? "#999DA1" : "27AE61"}
-                  />
-                </div>
-                <div className="reference">
-                  <p>{bankName}</p>
-                </div>
-                <div className="reference">
-                  <p>{bankName}</p>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
     </section>
   );
 };
 
-export default Withdrawals;
+export default Deposits;

@@ -52,7 +52,7 @@ const Deposits = () => {
               const { createdAt, transactiontype, status, amount, updatedAt } =
                 item;
 
-              let date = moment(createdAt).format("MMMM do yyyy, h:mm:ss a");
+              let date = moment(createdAt).format("MMMM Do YYYY, h:mm:ss a");
               return (
                 <div key={index} className="transaction_table_body">
                   <div className="date">
@@ -62,22 +62,25 @@ const Deposits = () => {
                     <p>{transactiontype}</p>
                   </div>
                   <div className="amount">
-                    <p>
-                      {symbol}
-                      {amount}
-                    </p>
+                    <p>${amount}</p>
                   </div>
                   <div className="status">
                     <Button
-                      title={status ? "Approved" : "Pending"}
+                      title={
+                        status === "approved"
+                          ? "Approved"
+                          : status === "pending"
+                          ? "Pending"
+                          : "Failed"
+                      }
                       width={100}
                       height={30}
-                      background={!status ? "#FFF3E7" : "#EDFFF9"}
-                      color={!status ? "#999DA1" : "27AE61"}
+                      background={status === "failed" ? "#FFF3E7" : "#EDFFF9"}
+                      color={status === "failed" ? "#999DA1" : "27AE61"}
                     />
                   </div>
                   <div className="reference">
-                    <p>{moment(updatedAt).format("MMMM do yyyy, h:mm:ss a")}</p>
+                    <p>{moment(updatedAt).format("MMMM Do YYYY, h:mm:ss a")}</p>
                   </div>
                 </div>
               );

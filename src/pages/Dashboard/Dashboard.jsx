@@ -20,6 +20,7 @@ import axios from "axios";
 import { useGlobalContext } from "../../context/context";
 import ActivateDeposit from "../ActivateDeposit";
 import { ToastContainer, toast } from "react-toastify";
+import ActivateWithdrawals from "../ActivateWithdrawals";
 
 const Dashboard = () => {
   const { pathname } = useLocation();
@@ -33,7 +34,12 @@ const Dashboard = () => {
   const [depositId, setDepositId] = useState(null);
   const [visibility, setVisibility] = useState(false);
   const [endPoint, setEndPoint] = useState("");
+  const [email, setEmail] = useState("");
+  const [withdrawalLoading, setwithdrawalLoading] = useState(false);
+
   const navigate = useNavigate();
+
+  const [updateWithdrawal, setupdateWithdrawal] = useState(false);
   const [deleteLoading, setDeleteLoader] = useState(false);
   const { baseUrl, getAllUsers, getUserDetails } = useGlobalContext();
 
@@ -79,6 +85,37 @@ const Dashboard = () => {
     setEndPoint(endPoint);
   };
 
+  const toggleWithdrawalStatus = (id, userID) => {
+    setDepositId(id);
+    setUserId(userID);
+    setupdateWithdrawal(!updateWithdrawal);
+  };
+
+  const withdrawalApproved = (id) => {
+    setwithdrawalLoading(true);
+    axios
+      .put(
+        `${baseUrl}wallet/withdrawals/approve/${id}`,
+        {
+          status: "approved",
+        },
+        { headers: { token: adminToken } }
+      )
+      .then((data) => {
+        if (data.status === 200) {
+          setwithdrawalLoading(false);
+          getUserDetails(userId);
+          toast.success("Withdrawal Approved");
+          setTimeout(() => {
+            navigate("/all-withdrawals");
+            setupdateWithdrawal(!updateStatus);
+          }, 2000);
+        }
+      })
+      .catch((error) => {
+        setwithdrawalLoading(false);
+      });
+  };
   const updateKYC = (id) => {
     setFailedLoading(true);
     axios
@@ -86,6 +123,7 @@ const Dashboard = () => {
         `${baseUrl}kyc/${id}`,
         {
           status: true,
+          email,
         },
         { headers: { token: adminToken } }
       )
@@ -112,7 +150,7 @@ const Dashboard = () => {
       .put(
         `${baseUrl}deposit/${depositId}`,
         {
-          status: true,
+          status: "approved",
         },
         { headers: { token: adminToken } }
       )
@@ -128,6 +166,32 @@ const Dashboard = () => {
       })
       .catch((error) => {
         setDepositLoading(false);
+      });
+  };
+
+  const updateDepositFailed = (id) => {
+    setFailedLoading(true);
+    axios
+      .put(
+        `${baseUrl}deposit/${id}`,
+        {
+          status: "failed",
+        },
+        { headers: { token: adminToken } }
+      )
+      .then((data) => {
+        toast.error("Deposit Failed");
+        if (data.status === 200) {
+          getUserDetails(id);
+          setFailedLoading(false);
+          setTimeout(() => {
+            navigate("/all-deposits");
+            setUpdateStatus(!updateStatus);
+          }, 3000);
+        }
+      })
+      .catch((error) => {
+        setFailedLoading(false);
       });
   };
 
@@ -166,7 +230,11 @@ const Dashboard = () => {
               />
               <Route
                 element={
-                  <CustomerDetails toggleDepositStatus={toggleDepositStatus} />
+                  <CustomerDetails
+                    toggleDepositStatus={toggleDepositStatus}
+                    setEmail={setEmail}
+                    toggleWithdrawalStatus={toggleWithdrawalStatus}
+                  />
                 }
                 path="/user-details/:id"
               />
@@ -192,6 +260,15 @@ const Dashboard = () => {
             endPoint={endPoint}
             updateKYC={updateKYC}
             kYCId={kYCId}
+            updateDepositFailed={updateDepositFailed}
+          />
+          <ActivateWithdrawals
+            updateStatus={updateWithdrawal}
+            toggleActivateDeposit={toggleWithdrawalStatus}
+            updateDepositApproved={withdrawalApproved}
+            id={depositId}
+            depositLoading={withdrawalLoading}
+            userId={userId}
           />
         </div>
       </div>

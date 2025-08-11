@@ -13,18 +13,35 @@ const Order = () => {
     getAllUsers,
     dLoading,
     usersLoading,
-    getAllKyc,
-    userKyc,
+    widthDrawals,
+    getAllWithdrawals,
+    allLoans,
+    getAllLoans,
   } = useGlobalContext();
 
   useEffect(() => {
     getAllDeposits(adminToken);
     getAllUsers(adminToken);
-    getAllKyc();
+    getAllWithdrawals(adminToken);
+    getAllLoans(adminToken);
   }, []);
 
-  const successfulDeposits = allDeposits.filter((item) => item.status === true);
-  const failedDeposits = allDeposits.filter((item) => item.status === false);
+  const successfulDeposits = allDeposits.filter(
+    (item) => item.status === "approved"
+  );
+  const pendingDeposits = allDeposits.filter(
+    (item) => item.status === "pending"
+  );
+  const failedDeposits = allDeposits.filter((item) => item.status === "failed");
+  const successWithdrawals = widthDrawals.filter(
+    (item) => item.status === "failed"
+  );
+  const pendingWithdrawals = widthDrawals.filter(
+    (item) => item.status === "pending"
+  );
+  const failedWithdrawals = widthDrawals.filter(
+    (item) => item.status === "failed"
+  );
 
   return (
     <section className="orders">
@@ -32,6 +49,24 @@ const Order = () => {
       <div className="order_statistics">
         <div className="order_statistics_item">
           <p className="dashboard_paragraph">Pending Deposits</p>
+          <h3 className="dashboard_header_text">
+            {dLoading ? (
+              <ColorRing
+                visible={true}
+                height="35"
+                width="35"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={["black", "black", "black", "black", "black"]}
+              />
+            ) : (
+              pendingDeposits.length
+            )}
+          </h3>
+        </div>
+        <div className="order_statistics_item">
+          <p className="dashboard_paragraph">Failed Deposits</p>
           <h3 className="dashboard_header_text">
             {dLoading ? (
               <ColorRing
@@ -87,7 +122,7 @@ const Order = () => {
           </h3>
         </div>
         <div className="order_statistics_item">
-          <p className="dashboard_paragraph"> Kycs</p>
+          <p className="dashboard_paragraph"> Deposits</p>
           <h3 className="dashboard_header_text">
             {dLoading ? (
               <ColorRing
@@ -100,7 +135,99 @@ const Order = () => {
                 colors={["black", "black", "black", "black", "black"]}
               />
             ) : (
-              userKyc.length
+              allDeposits.length
+            )}
+          </h3>
+        </div>
+        <div className="order_statistics_item">
+          <p className="dashboard_paragraph"> Withdrawals</p>
+          <h3 className="dashboard_header_text">
+            {dLoading ? (
+              <ColorRing
+                visible={true}
+                height="35"
+                width="35"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={["black", "black", "black", "black", "black"]}
+              />
+            ) : (
+              widthDrawals.length
+            )}
+          </h3>
+        </div>
+        <div className="order_statistics_item">
+          <p className="dashboard_paragraph"> Loans</p>
+          <h3 className="dashboard_header_text">
+            {dLoading ? (
+              <ColorRing
+                visible={true}
+                height="35"
+                width="35"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={["black", "black", "black", "black", "black"]}
+              />
+            ) : (
+              allLoans.length
+            )}
+          </h3>
+        </div>
+      </div>
+      <div className="order_statistics">
+        <div className="order_statistics_item">
+          <p className="dashboard_paragraph">All Pending Withdrawals</p>
+          <h3 className="dashboard_header_text">
+            {dLoading ? (
+              <ColorRing
+                visible={true}
+                height="35"
+                width="35"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={["black", "black", "black", "black", "black"]}
+              />
+            ) : (
+              pendingWithdrawals.length
+            )}
+          </h3>
+        </div>
+        <div className="order_statistics_item">
+          <p className="dashboard_paragraph">All Failed Withdrawals</p>
+          <h3 className="dashboard_header_text">
+            {dLoading ? (
+              <ColorRing
+                visible={true}
+                height="35"
+                width="35"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={["black", "black", "black", "black", "black"]}
+              />
+            ) : (
+              failedWithdrawals.length
+            )}
+          </h3>
+        </div>
+        <div className="order_statistics_item">
+          <p className="dashboard_paragraph"> Successful Withdrawals</p>
+          <h3 className="dashboard_header_text">
+            {dLoading ? (
+              <ColorRing
+                visible={true}
+                height="35"
+                width="35"
+                ariaLabel="blocks-loading"
+                wrapperStyle={{}}
+                wrapperClass="blocks-wrapper"
+                colors={["black", "black", "black", "black", "black"]}
+              />
+            ) : (
+              successWithdrawals.length
             )}
           </h3>
         </div>
@@ -110,6 +237,7 @@ const Order = () => {
           <h4>All Users</h4>
         </div>
         <TableBody
+          symbol={""}
           path={"user-details"}
           order={"Order"}
           tableData={allUsers.slice(0, 2)}
