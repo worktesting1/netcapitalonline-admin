@@ -434,7 +434,7 @@ const CustomerDetails = ({
               : details === "loans"
               ? userLoans
               : details === "customers_card_details"
-              ? allCards[0]
+              ? allCards
               : userWithdrawals
           }
           loading={
