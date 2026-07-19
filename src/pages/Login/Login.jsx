@@ -27,7 +27,7 @@ const Login = () => {
       setwait(true);
     }, 10000);
     axios
-      .post(`${baseUrl}auth/admin`, data)
+      .post(`${baseUrl}auth/adminLogin`, data)
       .then((data) => {
         if (data.status === 200) {
           if (wait) {
