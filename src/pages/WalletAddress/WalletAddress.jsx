@@ -14,8 +14,8 @@ const WalletAddress = () => {
   const getAllWalletAddresses = () => {
     setLoading(true);
     axios
-      .get(`${baseUrl}/admin-wallets`, {
-        headers: { Authorization: `Bearer ${adminToken}` },
+      .get(`${baseUrl}admin-wallets`, {
+        headers: { token: adminToken },
       })
       .then((data) => {
         if (data.status === 200) {

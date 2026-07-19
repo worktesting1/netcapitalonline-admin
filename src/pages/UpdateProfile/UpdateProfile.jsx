@@ -19,8 +19,8 @@ const UpdateProfile = () => {
   const updateAdminPassword = (data) => {
     setLoading(true);
     axios
-      .patch(`${baseUrl}/auth/admin/update-password`, data, {
-        headers: { Authorization: `Bearer ${adminToken}` },
+      .patch(`${baseUrl}auth/admin/update-password`, data, {
+        headers: { token: adminToken },
       })
       .then((data) => {
         setLoading(false);

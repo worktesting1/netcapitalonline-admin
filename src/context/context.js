@@ -50,7 +50,7 @@ const AppProvider = ({ children }) => {
   };
   const getAllFundingRequest = (token) => {
     axios
-      .get(`${baseUrl}admin/funding-requests`, {
+      .get(`${baseUrl}funding/pending`, {
         headers: { token: token },
       })
       .then((data) => {
@@ -181,7 +181,7 @@ const AppProvider = ({ children }) => {
 
   const getTotalBalance = (userId, token) => {
     axios
-      .get(`${baseUrl}wallet/${userId}`, { headers: { token } })
+      .get(`${baseUrl}wallet/balance/${userId}`, { headers: { token } })
       .then((response) => {
         setTotalAmount(response.data.balanceUSD);
       })

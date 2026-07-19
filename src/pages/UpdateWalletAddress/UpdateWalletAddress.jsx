@@ -25,9 +25,9 @@ const UpdateWalletAddress = () => {
       setLoading(true);
       axios
         .patch(
-          `${baseUrl}/admin-wallets/${id}`,
+          `${baseUrl}admin-wallets/${id}`,
           { address: data.address },
-          { headers: { Authorization: `Bearer ${adminToken}` } }
+          { headers: { token: adminToken } }
         )
         .then((data) => {
           if (data.status === 200) {
