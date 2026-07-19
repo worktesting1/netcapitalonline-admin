@@ -488,14 +488,18 @@ const TableBody = ({
                   <p className="food_item_paragraphs">{tableData?.idNumber}</p>
                 </div>
                 <div className={`table_body_header_item_6`}>
-                  <img
-                    src={tableData?.front[0]?.url}
-                    className="proof"
-                    alt=""
-                  />
+                  {tableData?.front?.[0]?.url ? (
+                    <img src={tableData.front[0].url} className="proof" alt="" />
+                  ) : (
+                    <p className="food_item_paragraphs">No image</p>
+                  )}
                 </div>
                 <div className={`table_body_header_item_7`}>
-                  <img src={tableData?.back[0]?.url} className="proof" alt="" />
+                  {tableData?.back?.[0]?.url ? (
+                    <img src={tableData.back[0].url} className="proof" alt="" />
+                  ) : (
+                    <p className="food_item_paragraphs">No image</p>
+                  )}
                 </div>
                 <div className={`table_body_header_item_8`}>
                   <Button

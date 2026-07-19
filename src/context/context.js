@@ -80,15 +80,15 @@ const AppProvider = ({ children }) => {
   // GET USER KYC DETAILS
 
   const getUserKyc = (id) => {
-    setSLoading(true);
+    setKLoading(true);
     axios
-      .get(`${baseUrl}kyc/${id}`, {
+      .get(`${baseUrl}kyc/myKYC/${id}`, {
         headers: { token: adminToken },
       })
       .then((data) => {
         if (data.status === 200) {
           setKLoading(false);
-          setUserKYC(data.data);
+          setUserKYC(data.data.kyc);
         }
       })
       .catch((error) => {

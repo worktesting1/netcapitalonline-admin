@@ -430,7 +430,7 @@ const CustomerDetails = ({
             details === "customers_favorite_details"
               ? userDeposits
               : details === "customers_order_details"
-              ? userKYC[0]
+              ? userKYC
               : details === "loans"
               ? userLoans
               : details === "customers_card_details"
