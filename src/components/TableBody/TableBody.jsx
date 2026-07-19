@@ -503,12 +503,26 @@ const TableBody = ({
                 </div>
                 <div className={`table_body_header_item_8`}>
                   <Button
-                    background={tableData?.status ? "#EDFFF9" : "#FFF3E7"}
-                    title={tableData?.status ? "Approved" : "Pending"}
+                    background={
+                      tableData?.status === "approved"
+                        ? "#EDFFF9"
+                        : tableData?.status === "rejected"
+                        ? "#FFF3E7"
+                        : "#FFF9E7"
+                    }
+                    title={
+                      tableData?.status === "approved"
+                        ? "Approved"
+                        : tableData?.status === "rejected"
+                        ? "Rejected"
+                        : "Pending"
+                    }
                     color={
-                      tableData?.status
+                      tableData?.status === "approved"
                         ? "var(--secondary-color)"
-                        : "var(--other-color)"
+                        : tableData?.status === "rejected"
+                        ? "var(--other-color)"
+                        : "#b45309"
                     }
                     width={83}
                     height={30}

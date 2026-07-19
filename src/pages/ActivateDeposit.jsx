@@ -12,12 +12,14 @@ const ActivateDeposit = ({
   failedLoading,
   endPoint,
   updateKYC,
+  rejectKYC,
+  rejectLoading,
   kYCId,
   updateDepositFailed,
 }) => {
   return (
     <>
-      {endPoint === "kyc" ? (
+      {endPoint === "kyc" && updateStatus ? (
         <section className="notification_modal">
           <div style={{ width: 450 }} className="notification_container">
             <div className="add_food_item_header">
@@ -29,31 +31,27 @@ const ActivateDeposit = ({
             <div className="close_container">
               <MdCheckCircle color={`var(--secondary-color)`} size={50} />
               <h3>Update KYC Status</h3>
-              <p>Click Approved to update user status to True on user end</p>
+              <p>Approve or Reject this user's KYC submission.</p>
             </div>
             <div className="notification_flex">
               <Button
                 background={"var(--secondary-color)"}
-                title={failedLoading ? "loading..." : "Approved"}
-                width={"100%"}
+                title={failedLoading ? "loading..." : "Approve"}
+                width={"50%"}
                 height={40}
                 fontsize={15}
                 color={"var(--color2)"}
                 navigate={() => updateKYC(kYCId)}
               />
-
-              {endPoint === "kyc" ? (
-                ""
-              ) : (
-                <Button
-                  background={"var(--other-color)"}
-                  title={failedLoading ? "loading..." : "Failed"}
-                  width={"50%"}
-                  height={40}
-                  fontsize={15}
-                  color={"white"}
-                />
-              )}
+              <Button
+                background={"var(--other-color)"}
+                title={rejectLoading ? "loading..." : "Reject"}
+                width={"50%"}
+                height={40}
+                fontsize={15}
+                color={"white"}
+                navigate={() => rejectKYC(kYCId)}
+              />
             </div>
           </div>
         </section>

@@ -41,6 +41,7 @@ const Dashboard = () => {
 
   const [updateWithdrawal, setupdateWithdrawal] = useState(false);
   const [deleteLoading, setDeleteLoader] = useState(false);
+  const [rejectLoading, setRejectLoading] = useState(false);
   const { baseUrl, getAllUsers, getUserDetails } = useGlobalContext();
 
   const toggleVisibility = () => setVisibility(!visibility);
@@ -78,10 +79,16 @@ const Dashboard = () => {
   };
 
   const toggleDepositStatus = (id, userID, endPoint) => {
+    if (id === undefined) {
+      // Close modal
+      setUpdateStatus(false);
+      setEndPoint("");
+      return;
+    }
     setDepositId(id);
     setKYCId(id);
     setUserId(userID);
-    setUpdateStatus(!updateStatus);
+    setUpdateStatus(true);
     setEndPoint(endPoint);
   };
 
@@ -122,7 +129,7 @@ const Dashboard = () => {
       .put(
         `${baseUrl}kyc/${id}`,
         {
-          status: true,
+          status: "approved",
           email,
         },
         { headers: { token: adminToken } }
@@ -130,16 +137,43 @@ const Dashboard = () => {
       .then((data) => {
         if (data.status === 200) {
           setFailedLoading(false);
-          toast.success("User KYC Status Updated");
+          toast.success("KYC Approved");
           setTimeout(() => {
             navigate("/users");
-            setUpdateStatus(!updateStatus);
+            setUpdateStatus(false);
             setEndPoint("");
           }, 3000);
         }
       })
       .catch((error) => {
         setFailedLoading(false);
+      });
+  };
+
+  const rejectKYC = (id) => {
+    setRejectLoading(true);
+    axios
+      .put(
+        `${baseUrl}kyc/${id}`,
+        {
+          status: "rejected",
+          email,
+        },
+        { headers: { token: adminToken } }
+      )
+      .then((data) => {
+        if (data.status === 200) {
+          setRejectLoading(false);
+          toast.error("KYC Rejected");
+          setTimeout(() => {
+            navigate("/users");
+            setUpdateStatus(false);
+            setEndPoint("");
+          }, 3000);
+        }
+      })
+      .catch((error) => {
+        setRejectLoading(false);
       });
   };
 
@@ -259,6 +293,8 @@ const Dashboard = () => {
             failedLoading={failedLoading}
             endPoint={endPoint}
             updateKYC={updateKYC}
+            rejectKYC={rejectKYC}
+            rejectLoading={rejectLoading}
             kYCId={kYCId}
             updateDepositFailed={updateDepositFailed}
           />
