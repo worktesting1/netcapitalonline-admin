@@ -179,6 +179,14 @@ const AppProvider = ({ children }) => {
       });
   };
 
+  const updateUserSuspension = (id, isSuspended) => {
+    return axios.put(
+      `${baseUrl}users/updatedata/${id}`,
+      { isSuspended },
+      { headers: { token: adminToken } }
+    );
+  };
+
   const getTotalBalance = (userId, token) => {
     axios
       .get(`${baseUrl}wallet/balance/${userId}`, { headers: { token } })
@@ -233,6 +241,7 @@ const AppProvider = ({ children }) => {
         userKyc,
         getAllKyc,
         getUserDetails,
+         updateUserSuspension,
         userDetails,
         dLoading,
         usersLoading,
