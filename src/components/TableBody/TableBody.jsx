@@ -283,6 +283,7 @@ const TableBody = ({
                   _id,
                   email,
                   country,
+                  isSuspended,
                 } = item;
                 return (
                   <div key={index} className="table_body_body">
@@ -316,9 +317,9 @@ const TableBody = ({
                     </div>
                     <div className={`table_body_header_item_8`}>
                       <Button
-                        background={status ? "#EDFFF9" : "#FFF3E7"}
-                        title={status ? "Active" : "Inactive"}
-                        color={status ? "#27AE61" : "var(--other-color)"}
+                        background={isSuspended ? "#FFF3E7" : "#EDFFF9"}
+                        title={isSuspended ? "Suspended" : "Active"}
+                        color={isSuspended ? "var(--other-color)" : "#27AE61"}
                         width={83}
                         height={30}
                       />
