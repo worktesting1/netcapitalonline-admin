@@ -5,6 +5,7 @@ import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGlobalContext } from "../../context/context";
 import { ColorRing } from "react-loader-spinner";
+import { toast } from "react-toastify";
 
 const CustomerDetails = ({
   toggleDepositStatus,
@@ -41,6 +42,7 @@ const CustomerDetails = ({
     getAllLoans,
     allCards,
     getAllCards,
+    updateUserSuspension,
   } = useGlobalContext();
   const {
     bonus,
@@ -54,7 +56,9 @@ const CustomerDetails = ({
     gender,
     maritalstatus,
     status,
+    isSuspended,
   } = userDetails;
+  const [suspensionLoading, setSuspensionLoading] = useState(false);
 
   userDeposits = allDeposits.filter((deposit) => deposit.userId === id);
   userWithdrawals = widthDrawals.filter((transfer) => transfer.userId === id);
@@ -84,6 +88,26 @@ const CustomerDetails = ({
       setDetails("customers_card_details");
     } else {
       setDetails("loans");
+    }
+  };
+
+  const toggleSuspension = async () => {
+    const nextSuspended = !Boolean(isSuspended);
+    setSuspensionLoading(true);
+    try {
+      const response = await updateUserSuspension(id, nextSuspended);
+      if (response.status === 200) {
+        await getUserDetails(id);
+        toast.success(
+          nextSuspended
+            ? "Account temporarily suspended"
+            : "Account suspension removed"
+        );
+      }
+    } catch (error) {
+      toast.error("Unable to update account suspension");
+    } finally {
+      setSuspensionLoading(false);
     }
   };
 
@@ -293,6 +317,38 @@ const CustomerDetails = ({
           />
         </div>
       </form>
+      <div
+        className="account_suspension_control"
+        style={{
+          alignItems: "center",
+          background: isSuspended ? "#FFF3E7" : "#EDFFF9",
+          border: "1px solid #E6E6E6",
+          borderRadius: 8,
+          display: "flex",
+          justifyContent: "space-between",
+          margin: "24px 0",
+          padding: "16px 20px",
+          gap: 16,
+        }}
+      >
+        <div>
+          <p className="add_food_item_form_labels">Account access</p>
+          <p className="dashboard_paragraph">
+            {isSuspended
+              ? "This user will see a temporary suspension notice after login."
+              : "This user can access the dashboard normally."}
+          </p>
+        </div>
+        <Button
+          title={suspensionLoading ? "Updating..." : isSuspended ? "Unsuspend account" : "Suspend account"}
+          height={40}
+          width={170}
+          borderRadius={6}
+          color="#fff"
+          background={isSuspended ? "#27AE61" : "var(--other-color)"}
+          navigate={toggleSuspension}
+        />
+      </div>
       <div className="customer_btn_flex">
         <Button
           id={1}
